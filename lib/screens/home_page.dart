@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:infocomsoft/functions/download_and_save.dart';
-import 'package:infocomsoft/utils/urls.dart';
+import 'package:infocomsoft/functions/check_file_status.dart';
+import 'package:infocomsoft/functions/file_path_function.dart';
+import 'package:infocomsoft/screens/downloading_page.dart';
+import 'package:infocomsoft/screens/web_wiew_screen.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -11,8 +13,25 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       body: Center(
         child: InkWell(
-          onTap: () {
-            DownloadAndSave.downloadAndSaveFile(Urls.fileUrl);
+          onTap: () async {
+            if (await CheckFileStatus.isFileExist()) {
+              String? path = await StorageFilePath.getFilePath();
+              // ignore: use_build_context_synchronously
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => WebViewScreen(
+                      path: path!,
+                    ),
+                  ));
+            } else {
+              // ignore: use_build_context_synchronously
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const DownloadingPage(),
+                  ));
+            }
           },
           child: Container(
             width: size.width * 0.5,
